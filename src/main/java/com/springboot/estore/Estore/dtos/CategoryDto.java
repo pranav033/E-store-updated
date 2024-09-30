@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryDto {
+public class  CategoryDto {
 
 
     private String categoryId;
