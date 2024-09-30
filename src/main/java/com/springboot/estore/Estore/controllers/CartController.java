@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,7 @@ public class CartController {
     private CartService cartService;
 
 
+    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
     @PostMapping("/additem/{userId}")
     public ResponseEntity<CartDto> addItemtoCart(@PathVariable("userId") String userID, @Valid @RequestBody AddItemtoCartRequest request)
     {
@@ -26,6 +28,7 @@ public class CartController {
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
     @DeleteMapping("/removeitem/{userId}/{cartItemId}")
     public ResponseEntity<ApiResponseMessage> removeFromCart(@PathVariable("cartItemId") int cartItemId,@PathVariable("userId") String userId)
     {
@@ -38,6 +41,7 @@ public class CartController {
         return ResponseEntity.ok(apiResponseMessage);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
     @DeleteMapping("/clearcart/{userId}")
     public  ResponseEntity<ApiResponseMessage> clearCart(@PathVariable("userId") String userId)
     {
@@ -50,6 +54,7 @@ public class CartController {
         return ResponseEntity.ok(apiResponseMessage);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
     @GetMapping("/getcartofuser/{userId}")
     public ResponseEntity<CartDto> getOneCartByUser(@PathVariable("userId") String userId)
     {
