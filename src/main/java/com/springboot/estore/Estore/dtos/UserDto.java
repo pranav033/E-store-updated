@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +23,8 @@ public class UserDto {
     @Pattern(regexp = "^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",message = "Invalid email")
     @NotBlank(message = "Invalid email")
     private String email;
+
+    private List<RoleDto> roles;
 
     //@Column(name = "user_password")
     @NotBlank(message = "Password required.")

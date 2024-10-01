@@ -9,6 +9,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -31,6 +33,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
                     .requestMatchers("/products/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET,"/users/**").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/users").permitAll()
                     .requestMatchers(HttpMethod.GET,"/categories/**").permitAll()
                     .requestMatchers("/categories/**").hasRole("ADMIN")
 
@@ -41,6 +44,11 @@ public class SecurityConfig {
         //type of security
         httpSecurity.httpBasic(Customizer.withDefaults());
         return httpSecurity.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

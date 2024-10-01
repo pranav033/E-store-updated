@@ -3,9 +3,11 @@ package com.springboot.estore.Estore.services.impl;
 import com.springboot.estore.Estore.converters.UserConverter;
 import com.springboot.estore.Estore.dtos.PageableResponse;
 import com.springboot.estore.Estore.dtos.UserDto;
+import com.springboot.estore.Estore.entities.Role;
 import com.springboot.estore.Estore.entities.User;
 import com.springboot.estore.Estore.exceptions.ResourceNotFoundException;
 import com.springboot.estore.Estore.helpers.Helper;
+import com.springboot.estore.Estore.repository.RoleRepository;
 import com.springboot.estore.Estore.repository.UserRepository;
 import com.springboot.estore.Estore.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -38,11 +41,24 @@ public class UserServiceImpl implements UserService {
     @Value("${user.profile.image.path}")
     private String imagePath;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+
     @Override
     public UserDto addUser(UserDto userDto) {
         String userId = UUID.randomUUID().toString();
         userDto.setUser_id(userId);
         User user = userConverter.UserDtoToEntity(userDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = new Role();
+        role.setRoleId(UUID.randomUUID().toString());
+        role.setRoleName("ROLE_NORMAL");
+        Role roleNormal = roleRepository.findByRoleName("ROLE_NORMAL").orElse(role);
+        user.setRoles(List.of(roleNormal));
         userRepository.save(user);
         return userDto;
     }
@@ -53,7 +69,7 @@ public class UserServiceImpl implements UserService {
         user.setAbout(userDto.getAbout());
         user.setName(userDto.getName());
         user.setGender(userDto.getGender());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setImage_name(userDto.getImage_name());
         User savedUser = userRepository.save(user);
         UserDto userDto1 = userConverter.UserEntityToDto(savedUser);
