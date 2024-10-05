@@ -1,5 +1,6 @@
 package com.springboot.estore.Estore.services.impl;
 
+import com.springboot.estore.Estore.config.AppConstants;
 import com.springboot.estore.Estore.converters.UserConverter;
 import com.springboot.estore.Estore.dtos.PageableResponse;
 import com.springboot.estore.Estore.dtos.UserDto;
@@ -56,8 +57,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role role = new Role();
         role.setRoleId(UUID.randomUUID().toString());
-        role.setRoleName("ROLE_NORMAL");
-        Role roleNormal = roleRepository.findByRoleName("ROLE_NORMAL").orElse(role);
+        role.setRoleName("ROLE_"+ AppConstants.ROLE_NORMAL);
+        Role roleNormal = roleRepository.findByRoleName("ROLE_"+AppConstants.ROLE_NORMAL).orElse(role);
         user.setRoles(List.of(roleNormal));
         userRepository.save(user);
         return userDto;

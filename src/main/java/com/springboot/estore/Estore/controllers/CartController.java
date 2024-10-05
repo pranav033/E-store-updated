@@ -1,5 +1,6 @@
 package com.springboot.estore.Estore.controllers;
 
+import com.springboot.estore.Estore.config.AppConstants;
 import com.springboot.estore.Estore.dtos.AddItemtoCartRequest;
 import com.springboot.estore.Estore.dtos.ApiResponseMessage;
 import com.springboot.estore.Estore.dtos.CartDto;
@@ -20,7 +21,7 @@ public class CartController {
     private CartService cartService;
 
 
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+ AppConstants.ROLE_ADMIN +"','"+AppConstants.ROLE_NORMAL+"')")
     @PostMapping("/additem/{userId}")
     public ResponseEntity<CartDto> addItemtoCart(@PathVariable("userId") String userID, @Valid @RequestBody AddItemtoCartRequest request)
     {
@@ -28,7 +29,7 @@ public class CartController {
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+AppConstants.ROLE_ADMIN+"','"+AppConstants.ROLE_NORMAL+"')")
     @DeleteMapping("/removeitem/{userId}/{cartItemId}")
     public ResponseEntity<ApiResponseMessage> removeFromCart(@PathVariable("cartItemId") int cartItemId,@PathVariable("userId") String userId)
     {
@@ -41,7 +42,7 @@ public class CartController {
         return ResponseEntity.ok(apiResponseMessage);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+AppConstants.ROLE_ADMIN+"','"+AppConstants.ROLE_NORMAL+"')")
     @DeleteMapping("/clearcart/{userId}")
     public  ResponseEntity<ApiResponseMessage> clearCart(@PathVariable("userId") String userId)
     {
@@ -54,7 +55,7 @@ public class CartController {
         return ResponseEntity.ok(apiResponseMessage);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+AppConstants.ROLE_ADMIN+"','"+AppConstants.ROLE_NORMAL+"')")
     @GetMapping("/getcartofuser/{userId}")
     public ResponseEntity<CartDto> getOneCartByUser(@PathVariable("userId") String userId)
     {

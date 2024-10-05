@@ -8,7 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,14 +42,17 @@ public class SecurityConfig {
 
         //configuring urls
         httpSecurity.authorizeRequests(request ->
-            request.requestMatchers(HttpMethod.DELETE,"/users/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT,"/users/**").hasAnyRole("ADMIN","NORMAL")
+            request.requestMatchers(HttpMethod.DELETE,"/users/**").hasRole(AppConstants.ROLE_ADMIN)
+                    .requestMatchers(HttpMethod.PUT,"/users/**").hasAnyRole(AppConstants.ROLE_ADMIN,AppConstants.ROLE_NORMAL)
                     .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
-                    .requestMatchers("/products/**").hasRole("ADMIN")
+                    .requestMatchers("/products/**").hasRole(AppConstants.ROLE_ADMIN)
                     .requestMatchers(HttpMethod.GET,"/users/**").permitAll()
                     .requestMatchers(HttpMethod.POST,"/users").permitAll()
                     .requestMatchers(HttpMethod.GET,"/categories/**").permitAll()
-                    .requestMatchers("/categories/**").hasRole("ADMIN")
+                    .requestMatchers("/categories/**").hasRole(AppConstants.ROLE_ADMIN)
+                    .requestMatchers(HttpMethod.POST,"/auth/generate-token").permitAll()
+                    .requestMatchers("/auth/**").authenticated()
+                    .anyRequest().permitAll()
 
 
 
@@ -70,6 +76,12 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
+        return builder.getAuthenticationManager();
     }
 
 }
