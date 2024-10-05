@@ -3,6 +3,7 @@ package com.springboot.estore.Estore.config;
 
 import com.springboot.estore.Estore.security.JwtAuthenticationEntryPoint;
 import com.springboot.estore.Estore.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 
 @Configuration
@@ -36,7 +41,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.disable());
+        httpSecurity.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration corsConfiguration = new CorsConfiguration();
+                        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
+                        corsConfiguration.setAllowedMethods(List.of("*"));
+                        corsConfiguration.setAllowCredentials(true);
+                        corsConfiguration.setAllowedHeaders(List.of("*"));
+                        corsConfiguration.setMaxAge(4000L);
+                        return corsConfiguration;
+                    }
+                })
+        );
 
         httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
 
