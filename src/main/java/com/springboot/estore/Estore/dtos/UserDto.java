@@ -1,5 +1,6 @@
 package com.springboot.estore.Estore.dtos;
 
+import com.springboot.estore.Estore.entities.Providers;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -29,6 +30,8 @@ public class UserDto {
     //@Column(name = "user_password")
     @NotBlank(message = "Password required.")
     private String password;
+
+    private Providers providers;
 
 
     //@Column(name = "user_gender")

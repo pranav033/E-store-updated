@@ -2,6 +2,7 @@ package com.springboot.estore.Estore.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.catalina.authenticator.jaspic.PersistentProviderRegistrations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +52,8 @@ public class User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Role> roles = new ArrayList<>();
+
+    private Providers providers;
 
 
     @Override

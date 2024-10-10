@@ -5,6 +5,7 @@ import com.springboot.estore.Estore.dtos.ApiResponseMessage;
 import com.springboot.estore.Estore.dtos.ImageResponse;
 import com.springboot.estore.Estore.dtos.PageableResponse;
 import com.springboot.estore.Estore.dtos.UserDto;
+import com.springboot.estore.Estore.entities.Providers;
 import com.springboot.estore.Estore.entities.User;
 import com.springboot.estore.Estore.services.FileService;
 import com.springboot.estore.Estore.services.UserService;
@@ -49,6 +50,7 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto)
     {
+        userDto.setProviders(Providers.SELF);
         UserDto userDto1 = userService.addUser(userDto);
         return new ResponseEntity<>(userDto1, HttpStatus.CREATED);
     }
