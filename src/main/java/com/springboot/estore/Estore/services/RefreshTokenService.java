@@ -1,6 +1,7 @@
 package com.springboot.estore.Estore.services;
 
 import com.springboot.estore.Estore.dtos.RefreshTokenDto;
+import com.springboot.estore.Estore.dtos.UserDto;
 
 public interface RefreshTokenService {
 
@@ -8,5 +9,7 @@ public interface RefreshTokenService {
 
     RefreshTokenDto findByToken(String token);
 
-    void verifyRefreshToken(String token);
+    RefreshTokenDto verifyRefreshToken(RefreshTokenDto refreshTokenDto);
+
+    UserDto getUser(RefreshTokenDto refreshTokenDto);
 }

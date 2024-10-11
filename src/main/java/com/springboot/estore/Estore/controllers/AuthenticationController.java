@@ -5,15 +5,13 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.springboot.estore.Estore.dtos.GoogleLoginRequest;
-import com.springboot.estore.Estore.dtos.JwtRequest;
-import com.springboot.estore.Estore.dtos.JwtResponse;
-import com.springboot.estore.Estore.dtos.UserDto;
+import com.springboot.estore.Estore.dtos.*;
 import com.springboot.estore.Estore.entities.Providers;
 import com.springboot.estore.Estore.entities.User;
 import com.springboot.estore.Estore.exceptions.BadApiRequest;
 import com.springboot.estore.Estore.exceptions.ResourceNotFoundException;
 import com.springboot.estore.Estore.security.JwtHelper;
+import com.springboot.estore.Estore.services.RefreshTokenService;
 import com.springboot.estore.Estore.services.UserService;
 import jakarta.validation.constraints.NotBlank;
 import org.modelmapper.ModelMapper;
@@ -45,6 +43,9 @@ public class AuthenticationController {
 
     @Autowired
     private JwtHelper jwtHelper;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @Value("${app.google.client_id}")
     private String gooleClientid;
@@ -78,7 +79,14 @@ public class AuthenticationController {
 
         String token = jwtHelper.generateToken(user);
 
-        JwtResponse jwtResponse = JwtResponse.builder().token(token).userDto(modelMapper.map(user, UserDto.class)).build();
+        //refresh token
+        RefreshTokenDto refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
+
+        JwtResponse jwtResponse = JwtResponse.builder()
+                .token(token)
+                .userDto(modelMapper.map(user, UserDto.class))
+                .refreshToken(refreshToken)
+                .build();
         return ResponseEntity.ok(jwtResponse);
     }
 
@@ -91,6 +99,23 @@ public class AuthenticationController {
         catch(BadCredentialsException ex){
             throw new BadCredentialsException("Invalid email and password");
         }
+
+    }
+
+
+    @PostMapping("/regenerate-token")
+    public ResponseEntity<JwtResponse> regenerateToken(@RequestBody RefreshTokenRequest refreshTokenRequest)
+    {
+        RefreshTokenDto refreshTokenDto = refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken());
+        RefreshTokenDto refreshTokenDto1 = refreshTokenService.verifyRefreshToken(refreshTokenDto);
+        UserDto userDto = refreshTokenService.getUser(refreshTokenDto1);
+        String token = jwtHelper.generateToken(modelMapper.map(userDto, User.class));
+        JwtResponse jwtResponse = JwtResponse.builder()
+                .refreshToken(refreshTokenDto)
+                .userDto(userDto)
+                .token(token)
+                .build();
+        return ResponseEntity.ok(jwtResponse);
 
     }
 

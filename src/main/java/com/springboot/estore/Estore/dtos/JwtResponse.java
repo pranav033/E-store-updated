@@ -11,6 +11,6 @@ import lombok.*;
 public class JwtResponse {
 
     private String token;
-    private String refreshToken;
+    private RefreshTokenDto refreshToken;
     UserDto userDto;
 }

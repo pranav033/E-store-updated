@@ -23,6 +23,4 @@ public class RefreshTokenDto {
 
     private Instant expiryDate;
 
-    @OneToOne
-    private UserDto userDto;
 }
